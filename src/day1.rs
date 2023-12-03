@@ -1,13 +1,22 @@
-use aoc_runner_derive::{aoc_generator, aoc};
 use anyhow::{anyhow, Result};
+use aoc_runner_derive::{aoc, aoc_generator};
 
 #[aoc_generator(day1, part1)]
 pub fn input_digits(input: &str) -> Result<Vec<u32>> {
-    input.lines().map(|l| {
-        let d1 = l.chars().find(|c| c.is_ascii_digit()).ok_or_else(|| anyhow!("no digits in line"))?;
-        let d2 = l.chars().rfind(|c| c.is_ascii_digit()).ok_or_else(|| anyhow!("no digits in line"))?;
-        Ok(10*d1.to_digit(10).unwrap() + d2.to_digit(10).unwrap())
-    }).collect::<Result<_>>()
+    input
+        .lines()
+        .map(|l| {
+            let d1 = l
+                .chars()
+                .find(|c| c.is_ascii_digit())
+                .ok_or_else(|| anyhow!("no digits in line"))?;
+            let d2 = l
+                .chars()
+                .rfind(|c| c.is_ascii_digit())
+                .ok_or_else(|| anyhow!("no digits in line"))?;
+            Ok(10 * d1.to_digit(10).unwrap() + d2.to_digit(10).unwrap())
+        })
+        .collect::<Result<_>>()
 }
 
 #[aoc_generator(day1, part2)]
@@ -49,7 +58,7 @@ pub fn input_digits_words(input: &str) -> Result<Vec<u32>> {
         let mut iv = 0;
         let mut maxi = 0;
         for (m, v) in matchers {
-            let i = s.rfind(m).map(|i| i+m.len()).unwrap_or(0);
+            let i = s.rfind(m).map(|i| i + m.len()).unwrap_or(0);
             if i >= maxi {
                 maxi = i;
                 iv = *v;
@@ -57,11 +66,14 @@ pub fn input_digits_words(input: &str) -> Result<Vec<u32>> {
         }
         iv
     };
-    Ok(input.lines().map(|l| {
-        let d1 = first_prefix(l);
-        let d2 = last_prefix(l);
-        d1*10 + d2
-    }).collect())
+    Ok(input
+        .lines()
+        .map(|l| {
+            let d1 = first_prefix(l);
+            let d2 = last_prefix(l);
+            d1 * 10 + d2
+        })
+        .collect())
 }
 
 #[aoc(day1, part1)]
@@ -84,15 +96,17 @@ mod tests {
     }
     #[test]
     fn part2_example() {
-        let input =
-r#"two1nine
+        let input = r#"two1nine
 eightwothree
 abcone2threexyz
 xtwone3four
 4nineeightseven2
 zoneight234
 7pqrstsixteen"#;
-        assert_eq!(&input_digits_words(input).unwrap(), &[29, 83, 13, 24, 42, 14, 76]);
+        assert_eq!(
+            &input_digits_words(input).unwrap(),
+            &[29, 83, 13, 24, 42, 14, 76]
+        );
         assert_eq!(day1(&input_digits_words(input).unwrap()), 281);
     }
 }

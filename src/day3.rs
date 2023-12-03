@@ -48,15 +48,15 @@ fn input_gen(input: &str) -> Result<Matrix> {
             Token::Num(id) => {
                 mat.parts.push(Part {
                     id,
-                    x0: (s.start - x_len*cur_y) as i32,
-                    x1: (s.end - 1 - x_len*cur_y) as i32,
+                    x0: (s.start - x_len * cur_y) as i32,
+                    x1: (s.end - 1 - x_len * cur_y) as i32,
                     y: cur_y as i32,
                 });
             }
             Token::Symbol(c) => {
                 mat.symbols.push(Symbol {
                     c,
-                    x: (s.start - x_len*cur_y) as i32,
+                    x: (s.start - x_len * cur_y) as i32,
                     y: cur_y as i32,
                 });
             }
@@ -64,7 +64,7 @@ fn input_gen(input: &str) -> Result<Matrix> {
                 if x_len == 0 {
                     x_len = s.start + 1;
                 }
-                cur_y+=1;
+                cur_y += 1;
             }
             Token::Error => {
                 bail!("lexer error");
@@ -105,7 +105,7 @@ fn part2(input: &Matrix) -> u32 {
         let mut cur_ratio = 1;
         for p in &input.parts {
             if is_adjacent(p, s) {
-                nparts+=1;
+                nparts += 1;
                 cur_ratio *= p.id;
                 if nparts == 2 {
                     sum += cur_ratio;
@@ -121,8 +121,7 @@ fn part2(input: &Matrix) -> u32 {
 mod tests {
     use super::*;
 
-    const EXAMPLE: &'static str =
-r#"467..114..
+    const EXAMPLE: &'static str = r#"467..114..
 ...*......
 ..35..633.
 ......#...
