@@ -2,6 +2,7 @@ use aoc_runner_derive::{aoc_generator, aoc};
 use anyhow::{anyhow, bail, Result};
 use logos::Logos;
 
+#[enpow::enpow(All)]
 #[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(skip r"[ :]+")]
 enum Token {
@@ -21,6 +22,7 @@ enum Token {
     Semicolon,
     #[token("\n")]
     Newline,
+    Error,
 }
 
 #[derive(Default, Debug)]
@@ -40,68 +42,32 @@ impl Game {
     }
 }
 
-trait LexerExt {
-    fn get_next_opt(&mut self) -> Result<Option<Token>>;
-    fn get_next(&mut self) -> Result<Token>;
-    fn expect(&mut self, t: Token) -> Result<()>;
-    fn get_num(&mut self) -> Result<u32>;
-}
-impl LexerExt for logos::Lexer<'_, Token> {
-    fn get_next_opt(&mut self) -> Result<Option<Token>> {
-        Ok(match self.next() {
-            None => None,
-            Some(Err(_)) => {
-                bail!("lexing error. slice: {}", self.slice());
-            },
-            Some(Ok(t)) => Some(t)
-        })
-    }
-    fn get_next(&mut self) -> Result<Token> {
-        self.get_next_opt()?.ok_or_else(|| anyhow!("unexpected lexer end"))
-    }
-    fn expect(&mut self, t: Token) -> Result<()> {
-        if self.get_next()? != t {
-            bail!("unexpected token");
-        }
-        Ok(())
-    }
-    fn get_num(&mut self) -> Result<u32> {
-        if let Token::Num(n) = self.get_next()? {
-            Ok(n)
-        } else {
-            bail!("unexpected token");
-        }
-    }
-}
-
 #[aoc_generator(day2)]
 fn input_gen(input: &str) -> Result<Vec<Game>> {
     let mut games = Vec::new();
-    let mut lex = Token::lexer(input);
-    'games: while let Some(t) = lex.get_next_opt()? {
-        if t != Token::Game {
-            bail!("expected Game");
-        }
-        let mut game = Game::new(lex.get_num()?);
+    let mut lex = Token::lexer(input).map(|t| t.unwrap_or_else(|_| Token::Error)).chain(Some(Token::Newline));
+    while let Some(t) = lex.next() {
+        t.expect_game("expected Game");
+        let mut game = Game::new(lex.next().and_then(Token::num).ok_or_else(|| anyhow!("expected game id"))?);
         'game: loop {
             let mut round =  Round::default();
             loop {
-                let n = lex.get_num()?;
-                match lex.get_next()? {
-                    Token::Red => {
+                let n = lex.next().and_then(Token::num).ok_or_else(|| anyhow!("expected num"))?;
+                match lex.next() {
+                    Some(Token::Red) => {
                         round.red += n;
                     },
-                    Token::Green => {
+                    Some(Token::Green) => {
                         round.green += n;
                     },
-                    Token::Blue => {
+                    Some(Token::Blue) => {
                         round.blue += n;
                     },
                     _ => {
-                        bail!("unexpected token");
+                        bail!("expected color");
                     },
                 }
-                match lex.get_next_opt()? {
+                match lex.next() {
                     Some(Token::Comma) => {
                         continue;
                     },
@@ -112,11 +78,6 @@ fn input_gen(input: &str) -> Result<Vec<Game>> {
                         game.rounds.push(round);
                         break 'game;
                     },
-                    None => {
-                        game.rounds.push(round);
-                        games.push(game);
-                        break 'games;
-                    }
                     _ => {
                         bail!("unexpected token");
                     },

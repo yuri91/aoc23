@@ -12,4 +12,5 @@ bench = false
 anyhow = "1.0.75"
 aoc-runner = "0.3.0"
 aoc-runner-derive = "0.3.0"
+enpow = "2.0.2"
 logos = "0.13.0"

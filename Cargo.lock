@@ -15,6 +15,7 @@ dependencies = [
  "anyhow",
  "aoc-runner",
  "aoc-runner-derive",
+ "enpow",
  "logos",
 ]
 
@@ -52,6 +53,17 @@ name = "beef"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a8241f3ebb85c056b509d4327ad0358fbbba6ffb340bf388f26350aeda225b1"
+
+[[package]]
+name = "enpow"
+version = "2.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "79735b9650fbaa5340cded95ab4c46e40b9455a5862c6338e054c92e7e227cfa"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
 
 [[package]]
 name = "fnv"
