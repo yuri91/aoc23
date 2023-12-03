@@ -2,7 +2,7 @@ use anyhow::{anyhow, bail, Result};
 use aoc_runner_derive::{aoc, aoc_generator};
 use logos::Logos;
 
-#[enpow::enpow(All)]
+#[enpow::enpow(Var, ExpectVar)]
 #[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(skip r"[ :]+")]
 enum Token {
@@ -46,7 +46,7 @@ impl Game {
 fn input_gen(input: &str) -> Result<Vec<Game>> {
     let mut games = Vec::new();
     let mut lex = Token::lexer(input)
-        .map(|t| t.unwrap_or_else(|_| Token::Error))
+        .map(|t| t.unwrap_or(Token::Error))
         .chain(Some(Token::Newline));
     while let Some(t) = lex.next() {
         t.expect_game("expected Game");
@@ -145,7 +145,7 @@ fn part2(input: &[Game]) -> u32 {
 mod tests {
     use super::*;
 
-    const EXAMPLE: &'static str = r#"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+    const EXAMPLE: &str = r#"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
 Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
 Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red

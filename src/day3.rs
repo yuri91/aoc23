@@ -2,7 +2,6 @@ use anyhow::{bail, Result};
 use aoc_runner_derive::{aoc, aoc_generator};
 use logos::Logos;
 
-#[enpow::enpow(All)]
 #[derive(Logos, Debug, PartialEq, Clone)]
 #[logos(skip r"\.+")]
 enum Token {
@@ -36,14 +35,14 @@ struct Matrix {
 
 #[aoc_generator(day3)]
 fn input_gen(input: &str) -> Result<Matrix> {
-    let mut lex = Token::lexer(input)
+    let lex = Token::lexer(input)
         .spanned()
-        .map(|(t, s)| (t.unwrap_or_else(|_| Token::Error), s))
+        .map(|(t, s)| (t.unwrap_or(Token::Error), s))
         .chain(Some((Token::Newline, 0usize..0usize)));
     let mut mat = Matrix::default();
     let mut cur_y = 0;
     let mut x_len = 0;
-    while let Some((t, s)) = lex.next() {
+    for (t, s) in lex {
         match t {
             Token::Num(id) => {
                 mat.parts.push(Part {
@@ -76,10 +75,8 @@ fn input_gen(input: &str) -> Result<Matrix> {
 fn is_adjacent(p: &Part, s: &Symbol) -> bool {
     if s.y > p.y + 1 || s.y < p.y - 1 {
         false
-    } else if s.x < p.x0 - 1 || s.x > p.x1 + 1 {
-        false
     } else {
-        true
+        !(s.x < p.x0 - 1 || s.x > p.x1 + 1)
     }
 }
 
@@ -121,7 +118,7 @@ fn part2(input: &Matrix) -> u32 {
 mod tests {
     use super::*;
 
-    const EXAMPLE: &'static str = r#"467..114..
+    const EXAMPLE: &str = r#"467..114..
 ...*......
 ..35..633.
 ......#...
