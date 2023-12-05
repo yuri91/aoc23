@@ -9,17 +9,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a4668cab20f66d8d020e1fbc0ebe47217433c1b6c8f2040faf858554e394ace6"
 
 [[package]]
-name = "aoc"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "aoc-runner",
- "aoc-runner-derive",
- "enpow",
- "logos",
-]
-
-[[package]]
 name = "aoc-runner"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -46,6 +35,17 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
+]
+
+[[package]]
+name = "aoc23"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "aoc-runner",
+ "aoc-runner-derive",
+ "enpow",
+ "logos",
 ]
 
 [[package]]
