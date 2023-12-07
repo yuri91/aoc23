@@ -23,16 +23,16 @@ struct Doc {
     distances: Vec<i64>,
 }
 
-fn parse_vec_num(lex: &mut impl Iterator<Item=Token>) -> Result<Vec<i64>> {
+fn parse_vec_num(lex: &mut impl Iterator<Item = Token>) -> Result<Vec<i64>> {
     let mut ret = Vec::new();
     loop {
         match lex.next() {
             Some(Token::Num(n)) => {
                 ret.push(n);
-            },
+            }
             Some(Token::Newline) => {
                 break;
-            },
+            }
             _ => {
                 bail!("unexpected token");
             }
@@ -45,14 +45,15 @@ fn input_gen(input: &str) -> Result<Doc> {
     let mut lex = Token::lexer(input)
         .map(|t| t.unwrap_or(Token::Error))
         .chain(Some(Token::Newline));
-    lex.next().map(Token::time).ok_or_else(|| anyhow!("expected time"))?;
+    lex.next()
+        .map(Token::time)
+        .ok_or_else(|| anyhow!("expected time"))?;
     let times = parse_vec_num(&mut lex)?;
-    lex.next().map(Token::distance).ok_or_else(|| anyhow!("expected distance"))?;
+    lex.next()
+        .map(Token::distance)
+        .ok_or_else(|| anyhow!("expected distance"))?;
     let distances = parse_vec_num(&mut lex)?;
-    Ok( Doc {
-        times,
-        distances,
-    })
+    Ok(Doc { times, distances })
 }
 
 fn input_adapt_part2(input: &Doc) -> Doc {
@@ -60,14 +61,14 @@ fn input_adapt_part2(input: &Doc) -> Doc {
     let mut cur_digits = 0;
     for t in input.times.iter().rev() {
         let digits = (*t as f64).log10().ceil() as i64;
-        time += (10i64).pow(cur_digits as u32)*t;
+        time += (10i64).pow(cur_digits as u32) * t;
         cur_digits += digits;
     }
     let mut distance = 0;
     let mut cur_digits = 0;
     for t in input.distances.iter().rev() {
         let digits = (*t as f64).log10().ceil() as i64;
-        distance += (10i64).pow(cur_digits as u32)*t;
+        distance += (10i64).pow(cur_digits as u32) * t;
         cur_digits += digits;
     }
     Doc {
@@ -78,10 +79,10 @@ fn input_adapt_part2(input: &Doc) -> Doc {
 
 fn viable_count(t: i64, d: i64) -> i64 {
     let mut ret = 0;
-    for i in 1..(t-1) {
-        let my_d = i*(t-i);
+    for i in 1..(t - 1) {
+        let my_d = i * (t - i);
         if my_d > d {
-            ret +=1;
+            ret += 1;
         }
     }
     ret
@@ -100,13 +101,11 @@ fn part2(input: &Doc) -> Result<i64> {
     part1(&input)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    const EXAMPLE: &str =
-r#"Time:      7  15   30
+    const EXAMPLE: &str = r#"Time:      7  15   30
 Distance:  9  40  200"#;
     #[test]
     fn part1_example() {

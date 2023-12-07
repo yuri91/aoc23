@@ -37,16 +37,18 @@ fn input_gen(input: &str) -> Result<Almanac> {
     let mut lex = Token::lexer(input)
         .map(|t| t.unwrap_or(Token::Error))
         .chain(Some(Token::DoubleNewline));
-    lex.next().and_then(Token::seeds).ok_or_else(|| anyhow!("expected seeds"))?;
+    lex.next()
+        .and_then(Token::seeds)
+        .ok_or_else(|| anyhow!("expected seeds"))?;
     let mut seeds = Vec::new();
     loop {
         match lex.next() {
             Some(Token::Num(n)) => {
                 seeds.push(n);
-            },
+            }
             Some(Token::DoubleNewline) => {
                 break;
-            },
+            }
             other => {
                 bail!("unexpected token {:?}", other);
             }
@@ -58,24 +60,35 @@ fn input_gen(input: &str) -> Result<Almanac> {
     };
     'maps: while let Some(t) = lex.next() {
         let (orig, dest) = t.map().ok_or_else(|| anyhow!("expected map"))?;
-        lex.next().and_then(Token::newline).ok_or_else(|| anyhow!("expected newline"))?;
+        lex.next()
+            .and_then(Token::newline)
+            .ok_or_else(|| anyhow!("expected newline"))?;
         let mut mappings = Vec::new();
         loop {
-            let to_start = lex.next().and_then(Token::num).ok_or_else(|| anyhow!("expected range to"))?;
-            let from_start = lex.next().and_then(Token::num).ok_or_else(|| anyhow!("expected range from"))?;
-            let len = lex.next().and_then(Token::num).ok_or_else(|| anyhow!("expected range len"))?;
+            let to_start = lex
+                .next()
+                .and_then(Token::num)
+                .ok_or_else(|| anyhow!("expected range to"))?;
+            let from_start = lex
+                .next()
+                .and_then(Token::num)
+                .ok_or_else(|| anyhow!("expected range from"))?;
+            let len = lex
+                .next()
+                .and_then(Token::num)
+                .ok_or_else(|| anyhow!("expected range len"))?;
             mappings.push(Mapping {
-                from: from_start..(from_start+len),
-                to: to_start..(to_start+len),
+                from: from_start..(from_start + len),
+                to: to_start..(to_start + len),
             });
             match lex.next() {
                 Some(Token::Newline) => {
                     continue;
-                },
+                }
                 Some(Token::DoubleNewline) => {
                     almanac.dir.insert(orig, (dest, mappings));
                     continue 'maps;
-                },
+                }
                 _ => {
                     bail!("unexpected token");
                 }
@@ -114,7 +127,7 @@ fn map_range(s: Range<u64>, mappings: &[Mapping]) -> Vec<Range<u64>> {
             for m in mappings {
                 if m.from.contains(&cur) {
                     let cur_mapped = m.to.start + (cur - m.from.start);
-                    let cur_mapped_end = cur_mapped + (s.end-cur).min(m.from.end - cur);
+                    let cur_mapped_end = cur_mapped + (s.end - cur).min(m.from.end - cur);
                     map.push(cur_mapped..cur_mapped_end);
                     cur += cur_mapped_end - cur_mapped;
                     break 'search;
@@ -139,7 +152,7 @@ fn map_range(s: Range<u64>, mappings: &[Mapping]) -> Vec<Range<u64>> {
 fn part2(input: &Almanac) -> Result<u64> {
     let mut seed_ranges = Vec::new();
     for i in (0..input.seeds.len()).step_by(2) {
-        seed_ranges.push(input.seeds[i]..(input.seeds[i]+input.seeds[i+1]));
+        seed_ranges.push(input.seeds[i]..(input.seeds[i] + input.seeds[i + 1]));
     }
     seed_ranges.sort_by_key(|s| s.start);
     let mut cur = "seed";
@@ -161,8 +174,7 @@ fn part2(input: &Almanac) -> Result<u64> {
 mod tests {
     use super::*;
 
-    const EXAMPLE: &str =
-r#"seeds: 79 14 55 13
+    const EXAMPLE: &str = r#"seeds: 79 14 55 13
 
 seed-to-soil map:
 50 98 2
