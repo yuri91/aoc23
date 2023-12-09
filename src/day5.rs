@@ -123,7 +123,7 @@ fn map_range(s: Range<u64>, mappings: &[Mapping]) -> Vec<Range<u64>> {
     let mut map = Vec::new();
     let mut cur = s.start;
     while cur != s.end {
-        'search: loop {
+        'search: {
             for m in mappings {
                 if m.from.contains(&cur) {
                     let cur_mapped = m.to.start + (cur - m.from.start);
@@ -142,7 +142,6 @@ fn map_range(s: Range<u64>, mappings: &[Mapping]) -> Vec<Range<u64>> {
             }
             map.push(s.clone());
             cur = s.end;
-            break;
         }
     }
     map
@@ -160,7 +159,7 @@ fn part2(input: &Almanac) -> Result<u64> {
         let mut next_ranges = Vec::new();
         let (next, mappings) = input.dir.get(cur).ok_or_else(|| anyhow!("missing key"))?;
         for s in seed_ranges {
-            let mut mapped = map_range(s, &mappings);
+            let mut mapped = map_range(s, mappings);
             next_ranges.append(&mut mapped);
         }
         cur = next;

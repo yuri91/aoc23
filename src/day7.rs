@@ -96,13 +96,13 @@ fn hand_kind(hand: [Card; 5]) -> HandKind {
     } else {
         h.push((5, Card::Joker));
     }
-    match h.as_slice() {
-        &[(5, _)] => Five,
-        &[(4, _), ..] => Four,
-        &[(3, _), (2, _)] => Full,
-        &[(3, _), ..] => Three,
-        &[(2, _), (2, _), ..] => TwoPair,
-        &[(2, _), ..] => OnePair,
+    match *h.as_slice() {
+        [(5, _)] => Five,
+        [(4, _), ..] => Four,
+        [(3, _), (2, _)] => Full,
+        [(3, _), ..] => Three,
+        [(2, _), (2, _), ..] => TwoPair,
+        [(2, _), ..] => OnePair,
         _ => High,
     }
 }
