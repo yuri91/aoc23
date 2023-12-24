@@ -103,7 +103,6 @@ fn dijkstra_constraints(
                 pmap[pred] = 0;
             }
             pmap[to] = 0;
-            println!("{pmap:?}");
             return p_d;
         }
         visited.insert((p, p_dir, p_dir_count));
